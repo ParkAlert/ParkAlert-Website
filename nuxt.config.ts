@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     public: {
       apiUrl: "https://parkalert.onrender.com",
       prodUrl: "https://park-alert-website.vercel.app",
-      googleClientId: "570071154891-0df5iht4ftdihlvtjsg14idh0hq04gkj.apps.googleusercontent.com"
+      googleClientId: ""
     }
   }
 });
