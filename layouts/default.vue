@@ -1,88 +1,65 @@
 <template>
-  <v-app>
-    <v-app-bar elevation="10" color="secondary" prominent position="relative">
-      <img src="../assets/icon.png" alt="" class="h-50 ml-3" />
-      <v-toolbar-title>parkAlert</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <!-- <v-btn variant="text" icon="mdi-magnify"></v-btn>
-      <v-btn variant="text" icon="mdi-dots-vertical"></v-btn> -->
-      <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+  <v-app id="inspire">
+    <v-app-bar color="secondary">
+      <img src="../assets/icon.png" alt="" class="h-50 ml-5" />
+
+      <v-toolbar-title class="title"><nuxt-link to="/">Park Alert</nuxt-link></v-toolbar-title>
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" location="top" temporary>
-      <v-list :items="items"></v-list>
-      <v-spacer></v-spacer>
-      <div v-if="windowWidth <= '600'" style="margin-left: 30%">
-        <v-btn text>登入</v-btn>
-        <v-btn text>註冊</v-btn>
-      </div>
-      <div v-else>
-        <v-btn variant="text">登入</v-btn>
-        <v-btn variant="text">註冊</v-btn>
-      </div>
+    <v-navigation-drawer v-model="drawer" location="right" temporary>
+      <v-sheet color="grey-lighten-4" class="pa-4">
+        <v-avatar class="mb-4" color="grey-darken-1" size="64"></v-avatar>
+
+        <div v-if="!email">請先登入或註冊</div>
+        <div v-else>
+          <nuxt-link to="/profile"> {{ email }}</nuxt-link>
+        </div>
+      </v-sheet>
+      <v-list>
+        <NuxtLink to="/match"><v-list-item link>尋找車主</v-list-item></NuxtLink>
+        <NuxtLink to="/qrcode"><v-list-item link>QR CODE</v-list-item></NuxtLink>
+        <NuxtLink to="/registration"><v-list-item link>註冊</v-list-item></NuxtLink>
+        <NuxtLink v-if="!email" to="/login"><v-list-item link>登入</v-list-item></NuxtLink>
+        <v-list-item v-else link @click="singout">登出 </v-list-item>
+      </v-list>
     </v-navigation-drawer>
 
-    <v-container>
-      <v-card>
+    <v-main class="bg-bg" style="padding-top: 64px">
+      <v-container id="root-container">
         <slot />
-      </v-card>
-    </v-container>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
-<script>
-export default {
-  data: () => ({
-    windowWidth: 0,
-    drawer: false,
-    group: null,
-    items: [
-      {
-        title: "用戶資料",
-        value: "用戶資料"
-      },
-      {
-        title: "尋找車主",
-        value: "尋找車主"
-      },
-      {
-        title: "產生條碼",
-        value: "產生條碼"
-      }
-    ]
-  }),
+<script setup lang="ts">
+const drawer = ref(false);
+const email = useState("email");
 
-  watch: {
-    group() {
-      this.drawer = false;
-    }
-  },
-  mounted() {
-    // 取得初始視窗大小
-    this.getWindowSize();
-
-    // 監聽視窗大小的變化，並更新資料中的值
-    window.addEventListener("resize", this.getWindowSize);
-  },
-  beforeUnMounted() {
-    // 移除監聽器，避免記憶體洩漏
-    window.removeEventListener("resize", this.getWindowSize);
-  },
-  methods: {
-    getWindowSize() {
-      this.windowWidth = window.innerWidth;
-    }
-  }
-};
+function singout() {
+  localStorage.setItem("token", "");
+  window.location.reload();
+}
 </script>
 <style lang="scss">
-.v-application__wrap {
-  backface-visibility: hidden;
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  max-width: 100%;
-  min-height: 64px;
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300&display=swap");
 
-  position: relative;
+.v-toolbar {
+  position: fixed;
+}
+
+* {
+  font-family: "Noto Sans TC", sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.title {
+  a {
+    color: white;
+  }
 }
 </style>

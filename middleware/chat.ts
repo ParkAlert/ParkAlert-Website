@@ -1,4 +1,5 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  const emailData = useState("chatEmail");
+  // 在進入chat頁面前，需先確保chatEmail這個state已存在
+  const emailData = useState("chatEmail", () => to.query.email);
   if (!emailData.value) return navigateTo("/match");
 });

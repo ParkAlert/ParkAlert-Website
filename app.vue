@@ -5,7 +5,10 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 </script>
 <template>
   <div>
-    <NuxtLayout></NuxtLayout>
-    <NuxtPage />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
+
+<script lang="ts" setup></script>

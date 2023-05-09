@@ -1,6 +1,7 @@
-# Nuxt 3 Minimal Starter
+# Park Alert
+臨停，不必在留電話
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+你可以在臨停時留下QRCODE，別人就可以順利聯絡你
 
 ## Setup
 

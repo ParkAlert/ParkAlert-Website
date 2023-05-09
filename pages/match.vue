@@ -40,7 +40,8 @@ const btnClicked = () => {
   emailData.value = email.value;
   if (email.value !== "") {
     router.push({
-      path: "/chat"
+      path: "/chat",
+      query: { email: email.value }
     });
   }
 };

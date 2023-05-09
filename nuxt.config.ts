@@ -7,5 +7,12 @@ export default defineNuxtConfig({
   },
   build: {
     transpile: ["vuetify"]
+  },
+  runtimeConfig: {
+    public: {
+      apiUrl: "https://parkalert.onrender.com",
+      prodUrl: "https://park-alert-website.vercel.app",
+      googleClientId: ""
+    }
   }
 });

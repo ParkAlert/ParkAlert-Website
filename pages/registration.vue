@@ -55,9 +55,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-// definePageMeta({
-//   middleware: "router-auth"
-// });
 const account = reactive({
   email: "",
   password: "",
@@ -133,8 +130,22 @@ const phoneRules = ref([
 ]);
 
 const submit = () => {
-  console.log(JSON.stringify(account));
+  // to-do : form validate error
+  createUser();
 };
+
+async function createUser() {
+  try {
+    const api = useApi();
+    const res = await api.createUser({
+      email: account.email,
+      password: account.password
+    });
+    console.log(res.data);
+  } catch (e) {
+    console.error(e);
+  }
+}
 </script>
 <style lang="scss">
 body {
