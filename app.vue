@@ -1,3 +1,8 @@
+<script setup>
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+</script>
 <template>
   <div>
     <NuxtLayout>
@@ -6,13 +11,4 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-useHead({
-  title: "Park Alert",
-  meta: [
-    { name: "description", content: "你的臨停小助手" },
-    { property: "og:title", content: "Park Alert" },
-    { property: "og:description", content: "你的臨停小助手" }
-  ]
-});
-</script>
+<script lang="ts" setup></script>

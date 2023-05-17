@@ -64,8 +64,8 @@ const submit = async () => {
     const signInResponse = { token: res.data }; // 取得signin字串
     const tokenString = signInResponse.token;
     localStorage.setItem("token", tokenString); // 將 token 字串儲存到本地存儲
-
-    navigateTo("/");
+    goTo();
+    // navigateTo("/");
   } catch (e: any) {
     // 非2xx基本都會到這(應該啦)
 
@@ -90,6 +90,16 @@ const handleGoogle = async () => {
     navigateTo("/");
   } catch (error) {
     console.error(error);
+  }
+};
+
+const goTo = () => {
+  const redirectUrl = localStorage.getItem("redirectUrl");
+  if (redirectUrl) {
+    navigateTo(redirectUrl);
+    localStorage.removeItem("redirectUrl"); // 移除已經不需要的 redirectUrl
+  } else {
+    navigateTo("/"); // 沒有 redirectUrl，就導回首頁
   }
 };
 </script>
