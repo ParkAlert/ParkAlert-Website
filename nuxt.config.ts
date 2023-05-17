@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-
 export default defineNuxtConfig({
   css: ["vuetify/lib/styles/main.sass", "@mdi/font/css/materialdesignicons.min.css"],
   typescript: {
@@ -17,9 +16,11 @@ export default defineNuxtConfig({
     }
   },
   modules: [
-    'nuxt-icon',
-    ['unplugin-icons/nuxt', { /* options */ }],
-    
-  ],
+    [
+      "unplugin-icons/nuxt",
+      {
+        /* options */
+      }
+    ]
+  ]
 });
-

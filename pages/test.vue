@@ -1,7 +1,5 @@
 <template class="bg-black">
   <div class="container"></div>
-  <icon-xmark style="font-size: 2em; color: blue" /><!-- 方法1 直接打flag即可 -->
-  <Icon name="mdi:youtube" size="96" color="black" /><!-- 方法2 使用Icon flag 在name裡打路徑-->
   <div class="car"><img src="../assets/car.png" class="carImg" /></div>
   <div class="man"><img src="../assets/manWalk1.png" class="manImg" /></div>
   <div class="phone"><img src="../assets/phone.png" class="phoneImg" /></div>
@@ -10,7 +8,6 @@
 <script setup lang="ts">
 import gsap from "gsap";
 // https://icones.js.org/ Icon來這邊找
-import IconXmark from "~icons/mdi/youtube"; // 方法1 建立flag 匯入路徑 再到下面去引用
 
 onMounted(() => {
   const runx = gsap.fromTo(".yellow", { width: 0 }, { width: 1350, duration: 3 });
