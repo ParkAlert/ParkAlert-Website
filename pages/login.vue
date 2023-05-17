@@ -63,7 +63,6 @@ const submit = async () => {
     const res = await api.signin(account);
     const signInResponse = { token: res.data }; // 取得signin字串
     const tokenString = signInResponse.token;
-    // console.log(tokenString);
     localStorage.setItem("token", tokenString); // 將 token 字串儲存到本地存儲
 
     navigateTo("/");

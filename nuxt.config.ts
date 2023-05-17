@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
+
 export default defineNuxtConfig({
   css: ["vuetify/lib/styles/main.sass", "@mdi/font/css/materialdesignicons.min.css"],
   typescript: {
@@ -14,5 +15,11 @@ export default defineNuxtConfig({
       prodUrl: "https://park-alert-website.vercel.app",
       googleClientId: ""
     }
-  }
+  },
+  modules: [
+    'nuxt-icon',
+    ['unplugin-icons/nuxt', { /* options */ }],
+    
+  ],
 });
+
