@@ -14,10 +14,10 @@ interface historyDto {
 }
 
 export const useApi = () => {
-  const config = useRuntimeConfig();
+  const configs = useRuntimeConfig();
 
   const instance = axios.create({
-    baseURL: config.public.apiUrl
+    baseURL: configs.public.apiUrl
   });
 
   instance.interceptors.request.use((config) => {

@@ -1,54 +1,77 @@
 <template>
-  <v-row>
-    <v-col cols="4" class="h-100">
-      <v-card class="chat-wrapper h-100">
-        <v-banner class="chat-header text-h6 font-weight-regular" sticky> 聊天列表 </v-banner>
-        <v-card-text>
-          <div
-            v-for="(item, index) in chatList.value"
-            :key="index"
-            class="chat-list rounded"
-            @click="selectChatTarget(item.target)"
-          >
-            <v-avatar color="grey-darken-1" size="42"></v-avatar>
-            <div class="d-flex flex-column">
-              <h3>{{ item.target }}</h3>
-              <p>{{ item.latestMsg.msg }}</p>
+  <ClientOnly>
+    <v-row>
+      <v-col cols="4" class="h-100">
+        <v-card class="chat-wrapper h-100 pb-2">
+          <v-banner class="chat-header text-h6 font-weight-regular" sticky> 聊天列表 </v-banner>
+          <v-card-text>
+            <div
+              v-for="(item, index) in chatList.value"
+              :key="index"
+              class="chat-list rounded"
+              @click="selectChatTarget(item.target)"
+            >
+              <v-avatar color="grey-darken-1" size="42"></v-avatar>
+              <div class="d-flex flex-column">
+                <h3>{{ item.target }}</h3>
+                <p>{{ item?.latestMsg?.msg }}</p>
+              </div>
             </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              color="secondary"
+              variant="tonal"
+              class="ml-auto mr-4"
+              @click="findDialog = true"
+            >
+              尋找車主
+              <v-icon end icon="mdi-account-multiple m-0"></v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col class="h-100">
+        <v-card class="chat-wrapper h-100">
+          <v-banner class="chat-header text-h6 font-weight-regular" sticky>
+            {{ targetEmail }}
+          </v-banner>
+
+          <v-card-text ref="refCardContainer">
+            <div v-for="(item, index) in msg.value" :key="index" class="d-flex mb-4">
+              <div v-if="item.name === userEmail" class="msg-bubble ml-auto py-3 px-4 rounded-xl">
+                {{ item.msg }}
+              </div>
+              <div v-else class="msg-bubble py-3 px-4 rounded-xl">{{ item.msg }}</div>
+            </div>
+          </v-card-text>
+          <div class="input-group">
+            <input
+              v-model="inputValue"
+              type="text"
+              placeholder="輸入訊息"
+              @keypress.enter="sendData"
+            />
+            <span @click="sendData">發送</span>
           </div>
+        </v-card></v-col
+      >
+    </v-row>
+
+    <v-dialog v-model="findDialog" width="auto">
+      <v-card>
+        <v-card-text>
+          <Match />
         </v-card-text>
       </v-card>
-    </v-col>
-    <v-col class="h-100">
-      <v-card class="chat-wrapper h-100">
-        <v-banner class="chat-header text-h6 font-weight-regular" sticky>
-          {{ targetEmail }}
-        </v-banner>
-
-        <v-card-text ref="refCardContainer">
-          <div v-for="(item, index) in msg.value" :key="index" class="d-flex mb-4">
-            <div v-if="item.name === userEmail" class="msg-bubble ml-auto py-3 px-4 rounded-xl">
-              {{ item.msg }}
-            </div>
-            <div v-else class="msg-bubble py-3 px-4 rounded-xl">{{ item.msg }}</div>
-          </div>
-        </v-card-text>
-        <div class="input-group">
-          <input
-            v-model="inputValue"
-            type="text"
-            placeholder="輸入訊息"
-            @keypress.enter="sendData"
-          />
-          <span @click="sendData">發送</span>
-        </div>
-      </v-card></v-col
-    >
-  </v-row>
+    </v-dialog>
+  </ClientOnly>
 </template>
 <script setup lang="ts">
 import io from "socket.io-client";
-
+definePageMeta({
+  middleware: "auth"
+});
 interface Msg {
   name: string;
   msg: string;
@@ -76,6 +99,7 @@ const chatList: ChatList = reactive({ value: [] });
 const targetEmail: Ref<string> = ref(""); // 聊天目標的email
 const userEmail = ref(""); // 當前用戶的email
 const refCardContainer: any = ref(null);
+const findDialog: Ref<boolean> = ref(false);
 
 let socket: any = null;
 
@@ -85,7 +109,7 @@ onMounted(async () => {
   await getChatHistory();
   targetEmail.value = route.currentRoute.value.query.email as string;
   setupSocket();
-  refCardContainer.value.$el.scrollTo(0, refCardContainer.value.$el.clientHeight);
+  chatScrollBottom();
 });
 
 function setupSocket() {
@@ -104,16 +128,18 @@ function setupSocket() {
     navigateTo("/login");
   });
 
-  // 連結失敗
+  // 連結失敗Bottom
   socket.on("connect_error", (error: Error) => {
     console.log("Connection error:", error);
   });
 
   // 接收訊息
   socket.on("onMessage", async (res: any) => {
-    await getChatHistory();
+    await getChatList();
+    // 如果接受的訊息是當前正在聊天對象
     if (res.roomName.replace(userEmail.value, "") === targetEmail.value) {
-      msg.value = res;
+      msg.value = res.chatHistory;
+      chatScrollBottom();
     }
   });
 }
@@ -121,6 +147,7 @@ function setupSocket() {
 function sendData() {
   socket.emit("newMessage", inputValue.value);
   inputValue.value = "";
+  chatScrollBottom();
 }
 
 async function selectChatTarget(target: string) {
@@ -163,6 +190,10 @@ async function getChatList() {
   } catch (e) {
     console.log(e);
   }
+}
+
+function chatScrollBottom() {
+  refCardContainer.value.$el.scrollTo(0, refCardContainer.value.$el.scrollHeight);
 }
 </script>
 <style lang="scss" scoped>
@@ -237,7 +268,33 @@ async function getChatList() {
     }
   }
 }
-
+.wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 340px;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  background: rgb(var(--v-theme-white));
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  padding: 40px;
+  input {
+    border: none;
+  }
+  .text-input {
+    .v-label {
+      font-weight: 600;
+      color: rgb(var(--v-theme-secondary));
+    }
+  }
+  .mt-2 {
+    color: rgb(var(--v-theme-white));
+    font-size: 16px;
+    font-weight: 600;
+    background: rgb(var(--v-theme-secondaryVariant));
+  }
+}
 .msg-bubble {
   background-color: rgb(var(--v-theme-secondary));
   font-size: 1.25rem;

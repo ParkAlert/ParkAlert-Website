@@ -6,7 +6,7 @@
       </v-col>
       <v-col class="d-flex flex-column btn-list justify-center align-center" cols="12" sm="6">
         <h1>臨停，不必再留電話</h1>
-        <nuxt-link to="/match" class="w-50">
+        <nuxt-link to="/chat" class="w-50">
           <v-btn size="large" class="w-100"> 尋找車主 </v-btn>
         </nuxt-link>
         <nuxt-link to="/qrcode" class="w-50">
