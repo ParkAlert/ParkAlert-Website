@@ -22,10 +22,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
 const emailData: any = useState("chatEmail", () => "");
 const email = ref("");
-const router = useRouter();
+const emit = defineEmits(["close"]);
 
 const rule = ref([
   (value: any) => {
@@ -39,10 +38,7 @@ const rule = ref([
 const btnClicked = () => {
   emailData.value = email.value;
   if (email.value !== "") {
-    router.push({
-      path: "/chat",
-      query: { email: email.value }
-    });
+    emit("close", emailData.value);
   }
 };
 </script>

@@ -13,7 +13,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiUrl: "http://localhost:5090",
+      apiUrl: "https://parkalert.onrender.com",
       prodUrl: "https://park-alert-website.vercel.app",
       googleClientId: ""
     }

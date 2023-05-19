@@ -32,7 +32,7 @@
         </v-card>
       </v-col>
       <v-col class="h-100">
-        <v-card class="chat-wrapper h-100">
+        <v-card v-if="targetEmail" class="chat-wrapper h-100">
           <v-banner class="chat-header text-h6 font-weight-regular" sticky>
             {{ targetEmail }}
           </v-banner>
@@ -54,24 +54,33 @@
             />
             <span @click="sendData">發送</span>
           </div>
-        </v-card></v-col
-      >
+        </v-card>
+
+        <v-card v-else class="chat-wrapper h-100">
+          <div class="empty-chat h-100">選擇聊天室或開啟新對話</div>
+        </v-card>
+      </v-col>
     </v-row>
 
     <v-dialog v-model="findDialog" width="auto">
       <v-card>
         <v-card-text>
-          <Match />
+          <Match @close="newChat" />
         </v-card-text>
       </v-card>
     </v-dialog>
   </ClientOnly>
 </template>
 <script setup lang="ts">
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 definePageMeta({
   middleware: "auth"
 });
+
+const route = useRouter();
+const api = useApi();
+let socket: any = null;
+
 interface Msg {
   name: string;
   msg: string;
@@ -91,29 +100,47 @@ interface ChatList {
   value: ChatListItem[];
 }
 
-const api = useApi();
-const inputValue = ref("");
 const msg: MsgList = reactive({ value: [] });
-const route = useRouter();
 const chatList: ChatList = reactive({ value: [] });
 const targetEmail: Ref<string> = ref(""); // 聊天目標的email
 const userEmail = ref(""); // 當前用戶的email
 const refCardContainer: any = ref(null);
-const findDialog: Ref<boolean> = ref(false);
-
-let socket: any = null;
+const inputValue = ref("");
+const findDialog: Ref<boolean> = ref(false); // 新增新聊天對象modal
 
 onMounted(async () => {
-  await getUserEmail();
-  await getChatList();
-  await getChatHistory();
-  targetEmail.value = route.currentRoute.value.query.email as string;
-  setupSocket();
-  chatScrollBottom();
+  await getUserEmail(); // 取得當前用戶email
+  initChat();
+  await getChatList(); // 取得當前用戶聊天列表
 });
 
+// 當還未指定聊天對象，只是單純掃描qrcode或直接進入路由
+async function initChat() {
+  if (!route.currentRoute.value.query.email) return;
+
+  targetEmail.value = route.currentRoute.value.query.email as string;
+  setupSocket();
+  await getChatHistory();
+
+  chatScrollBottom();
+}
+
+async function newChat(data: string) {
+  route.push({
+    path: "/chat",
+    query: { email: data }
+  });
+  targetEmail.value = data;
+  setupSocket();
+  await getChatHistory();
+  await getChatList();
+  chatScrollBottom();
+  findDialog.value = false;
+}
+
+// 建立socket連線
 function setupSocket() {
-  socket = io("http://localhost:5090", {
+  socket = io("https://parkalert.onrender.com", {
     extraHeaders: {
       Authorization: "Bearer " + localStorage.getItem("token"),
       chatWith: targetEmail.value
@@ -144,12 +171,14 @@ function setupSocket() {
   });
 }
 
+// 送出訊息
 function sendData() {
   socket.emit("newMessage", inputValue.value);
   inputValue.value = "";
   chatScrollBottom();
 }
 
+// 選擇制定聊天對象
 async function selectChatTarget(target: string) {
   route.push({
     path: "/chat",
@@ -162,8 +191,8 @@ async function selectChatTarget(target: string) {
 
   refCardContainer.value.$el.scrollTo(0, refCardContainer.value.$el.scrollHeight);
 }
-// 送出訊息
 
+// 取得當前用戶email
 async function getUserEmail() {
   try {
     const res = await api.isAuth();
@@ -173,6 +202,7 @@ async function getUserEmail() {
   }
 }
 
+// 取得當前聊天紀錄
 async function getChatHistory() {
   try {
     const res = await api.getHistory({ user1: userEmail.value, user2: targetEmail.value });
@@ -182,16 +212,17 @@ async function getChatHistory() {
   }
 }
 
+// 取得當前聊天列表
 async function getChatList() {
   try {
     const res = await api.getChatList();
     chatList.value = res.data.list;
-    console.log(chatList.value);
   } catch (e) {
     console.log(e);
   }
 }
 
+// 將聊天的滾動條移至最底
 function chatScrollBottom() {
   refCardContainer.value.$el.scrollTo(0, refCardContainer.value.$el.scrollHeight);
 }
@@ -266,6 +297,13 @@ function chatScrollBottom() {
         color: rgb(var(--v-theme-secondaryVariant));
       }
     }
+  }
+
+  .empty-chat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
   }
 }
 .wrapper {

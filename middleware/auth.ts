@@ -1,7 +1,6 @@
 async function isAuth() {
   try {
     const api = useApi();
-    console.log(api);
     const res = await api.isAuth();
     return true;
   } catch (e: any) {
@@ -12,6 +11,7 @@ async function isAuth() {
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   if (process.server) {
+    // 需使用到local storage ，因此不在server端運作
     return;
   }
   if (!(await isAuth())) return navigateTo("/login");
