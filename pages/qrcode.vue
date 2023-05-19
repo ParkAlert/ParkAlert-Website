@@ -102,7 +102,7 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 body {
   background: rgb(var(--v-theme-primary));
   margin: 0;

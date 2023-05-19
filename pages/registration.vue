@@ -147,7 +147,7 @@ async function createUser() {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 body {
   background-color: rgb(var(--v-theme-primary));
   margin: 0;

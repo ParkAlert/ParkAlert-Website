@@ -1,15 +1,18 @@
 <template>
   <ClientOnly>
     <v-row>
-      <v-col cols="4" class="h-100">
-        <v-card class="chat-wrapper h-100 pb-2">
+      <v-col class="h-100 d-none d-md-flex" cols="12" md="4">
+        <v-card class="chat-wrapper h-100 pb-2 w-100">
           <v-banner class="chat-header text-h6 font-weight-regular" sticky> 聊天列表 </v-banner>
           <v-card-text>
             <div
               v-for="(item, index) in chatList.value"
               :key="index"
               class="chat-list rounded"
-              @click="selectChatTarget(item.target)"
+              @click="
+                selectChatTarget(item.target);
+                isShowChatList = true;
+              "
             >
               <v-avatar color="grey-darken-1" size="42"></v-avatar>
               <div class="d-flex flex-column">
@@ -26,13 +29,24 @@
               @click="findDialog = true"
             >
               尋找車主
-              <v-icon end icon="mdi-account-multiple m-0"></v-icon>
+              <v-icon end icon="mdi-account-multiple-plus m-0"></v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
-      <v-col class="h-100">
-        <v-card v-if="targetEmail" class="chat-wrapper h-100">
+      <v-col class="h-100 d-flex flex-column">
+        <div class="d-md-none">
+          <v-btn color="secondary" variant="tonal" class="mb-3" @click="listDialog = true">
+            聊天列表
+            <v-icon end icon="mdi-account-multiple m-0"></v-icon>
+          </v-btn>
+          <v-btn color="secondary" variant="tonal" class="ml-2 mb-3" @click="findDialog = true">
+            尋找車主
+            <v-icon end icon="mdi-account-multiple-plus m-0"></v-icon>
+          </v-btn>
+        </div>
+
+        <v-card v-if="targetEmail" class="chat-wrapper h-100 w-100">
           <v-banner class="chat-header text-h6 font-weight-regular" sticky>
             {{ targetEmail }}
           </v-banner>
@@ -66,6 +80,29 @@
       <v-card>
         <v-card-text>
           <Match @close="newChat" />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="listDialog" width="auto">
+      <v-card class="chat-wrapper h-100 pb-2 w-100">
+        <v-banner class="chat-header text-h6 font-weight-regular" sticky> 聊天列表 </v-banner>
+        <v-card-text>
+          <div
+            v-for="(item, index) in chatList.value"
+            :key="index"
+            class="chat-list rounded"
+            @click="
+              selectChatTarget(item.target);
+              isShowChatList = true;
+            "
+          >
+            <v-avatar color="grey-darken-1" size="42"></v-avatar>
+            <div class="d-flex flex-column">
+              <h3>{{ item.target }}</h3>
+              <p>{{ item?.latestMsg?.msg }}</p>
+            </div>
+          </div>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -107,6 +144,8 @@ const userEmail = ref(""); // 當前用戶的email
 const refCardContainer: any = ref(null);
 const inputValue = ref("");
 const findDialog: Ref<boolean> = ref(false); // 新增新聊天對象modal
+const listDialog = ref(false);
+const isShowChatList = ref(false);
 
 onMounted(async () => {
   await getUserEmail(); // 取得當前用戶email
@@ -190,6 +229,8 @@ async function selectChatTarget(target: string) {
   await setupSocket();
 
   refCardContainer.value.$el.scrollTo(0, refCardContainer.value.$el.scrollHeight);
+
+  listDialog.value = false;
 }
 
 // 取得當前用戶email

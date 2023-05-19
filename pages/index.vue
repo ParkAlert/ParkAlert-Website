@@ -25,7 +25,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup scoped>
 import gsap from "gsap";
 import { onMounted } from "vue";
 onMounted(() => {

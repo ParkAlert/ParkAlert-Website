@@ -53,7 +53,7 @@ const handleEditLicense = () => {
   console.log("edit license section pressed");
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 body {
   background-color: rgb(var(--v-theme-primary));
   margin: 0;
