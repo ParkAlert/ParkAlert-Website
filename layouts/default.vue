@@ -25,8 +25,8 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main ref="main" class="bg-bg" style="padding-top: 64px">
-      <v-container id="root-container">
+    <v-main class="bg-bg" style="padding-top: 64px">
+      <v-container id="root-container" class="h-100">
         <slot />
       </v-container>
     </v-main>

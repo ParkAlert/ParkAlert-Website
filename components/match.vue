@@ -22,10 +22,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
 const emailData: any = useState("chatEmail", () => "");
 const email = ref("");
-const router = useRouter();
+const emit = defineEmits(["close"]);
 
 const rule = ref([
   (value: any) => {
@@ -39,27 +38,14 @@ const rule = ref([
 const btnClicked = () => {
   emailData.value = email.value;
   if (email.value !== "") {
-    router.push({
-      path: "/chat",
-      query: { email: email.value }
-    });
+    emit("close", emailData.value);
   }
 };
 </script>
 
-<style lang="scss">
-body {
-  background: rgb(var(--v-theme-primary));
-  margin: 0;
-  padding: 0;
-}
-
-.v-application {
-  background-color: rgb(var(--v-theme-primary));
-}
-
+<style lang="scss" scoped>
 .wrapper {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   width: 340px;

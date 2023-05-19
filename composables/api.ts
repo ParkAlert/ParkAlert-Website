@@ -7,11 +7,17 @@ interface userDto {
 interface oAuthDto {
   oAuthToken: string;
 }
+
+interface historyDto {
+  user1: string;
+  user2: string;
+}
+
 export const useApi = () => {
-  const config = useRuntimeConfig();
+  const configs = useRuntimeConfig();
 
   const instance = axios.create({
-    baseURL: config.public.apiUrl
+    baseURL: configs.public.apiUrl
   });
 
   instance.interceptors.request.use((config) => {
@@ -27,6 +33,8 @@ export const useApi = () => {
     createUser: (data: userDto) => instance.post("/users", data),
     isAuth: () => instance.get("/users/isAuth"),
     signin: (data: userDto) => instance.post("/users/signin", data),
-    google_signin: (data: oAuthDto) => instance.post("/users/google_signin", data)
+    google_signin: (data: oAuthDto) => instance.post("/users/google_signin", data),
+    getHistory: (data: historyDto) => instance.post("/chat/history", data),
+    getChatList: () => instance.get("/chat/list")
   };
 };
