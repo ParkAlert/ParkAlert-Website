@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="wrapper">
-      <div class="p-container mb-2" style="display: flex; justify-content: center; margin: 5px 0">
+      <div class="p-container" style="display: flex; justify-content: center; margin-bottom: 20px">
         <p style="font-size: 16px; font-weight: 600">掃描信箱</p>
       </div>
       <v-sheet class="mx-auto">
@@ -51,15 +51,15 @@ onMounted(() => {
     .start(
       { facingMode: "environment" },
       { fps: 10 },
-      (decodedText, decodedResult) => {
+      (decodedTextL: any, decodedResult: any) => {
         const tempUrl = decodedResult.result.text;
         const tempEmail = tempUrl.substring(tempUrl.indexOf("email=") + 6);
         html5QrCode.stop();
         emit("close", tempEmail);
       },
-      (errorMessage) => {}
+      (errorMessage: any) => {}
     )
-    .catch((err) => {
+    .catch((err: any) => {
       console.log(err);
     });
 });
@@ -80,7 +80,7 @@ onUnmounted(() => {
   background: rgb(var(--v-theme-white));
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  padding: 40px;
+  padding: 20px;
   input {
     border: none;
   }
