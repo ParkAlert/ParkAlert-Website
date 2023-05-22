@@ -110,6 +110,7 @@
 </template>
 <script setup lang="ts">
 import { io } from "socket.io-client";
+
 definePageMeta({
   middleware: "auth"
 });
