@@ -14,12 +14,6 @@
         <nuxt-link to="/qrcode" class="w-50">
           <v-btn size="large" class="w-100"> QRCODE </v-btn>
         </nuxt-link>
-        <nuxt-link to="/login" class="w-50">
-          <v-btn size="large" class="w-100"> 登入 </v-btn>
-        </nuxt-link>
-        <nuxt-link to="/registration" class="w-50">
-          <v-btn size="large" class="w-100"> 註冊 </v-btn>
-        </nuxt-link>
       </v-col>
     </v-row>
   </div>

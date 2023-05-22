@@ -27,6 +27,7 @@ import { Html5Qrcode } from "html5-qrcode";
 const emailData: any = useState("chatEmail", () => "");
 const email = ref("");
 const emit = defineEmits(["close"]);
+let html5QrCode: any = null;
 
 const rule = ref([
   (value: any) => {
@@ -44,17 +45,11 @@ const btnClicked = () => {
   }
 };
 
-onMounted(async () => {
-  let cameraId: any;
-  const devices = await Html5Qrcode.getCameras();
-  if (devices && devices.length) {
-    cameraId = devices[0].id;
-  }
-
-  const html5QrCode = new Html5Qrcode("qrcode-scan");
+onMounted(() => {
+  html5QrCode = new Html5Qrcode("qrcode-scan");
   html5QrCode
     .start(
-      cameraId,
+      { facingMode: "environment" },
       { fps: 10 },
       (decodedText, decodedResult) => {
         const tempUrl = decodedResult.result.text;
@@ -67,6 +62,10 @@ onMounted(async () => {
     .catch((err) => {
       console.log(err);
     });
+});
+
+onUnmounted(() => {
+  html5QrCode.stop();
 });
 </script>
 
