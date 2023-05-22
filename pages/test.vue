@@ -31,7 +31,7 @@ onMounted(() => {
   });
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .container {
   position: absolute;
   width: 100rem;
