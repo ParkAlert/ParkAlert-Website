@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: web_app
+    image: web_app
+    restart: always
+    ports:
+      - '${DOCKER_HOST_MACHINE_PORT}:3000'
+  nginx:
+    container_name: nginx
+    restart: on-failure
+    build: ./nginx
+    ports:
+      - '80:80'
